@@ -8,10 +8,24 @@ interface JwtPayload {
 
 export async function GET(req: Request) {
     try {
-        const token = req.headers.get("Authorization")?.split("Bearer ")[1];
+        const token = req.headers.get("cookie")
+            ?.split("; ")
+            .find((c) => c.startsWith("accessToken="))
+            ?.split("=")[1];
+
 
         if (!token) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            return NextResponse.json(
+                { error: "Unauthorizedsss" },
+                {
+                    status: 401,
+                    headers: {
+                        "Access-Control-Allow-Origin": "*",
+                        "Access-Control-Allow-Methods": "GET, OPTIONS",
+                        "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                    },
+                }
+            );
         }
 
         const payload = jwt.verify(
@@ -19,10 +33,29 @@ export async function GET(req: Request) {
             process.env.ACCESS_TOKEN_SECRET!
         ) as JwtPayload;
 
-        // Return the user's email
-        return NextResponse.json({ email: payload.email });
+        return NextResponse.json(
+            { email: payload.email },
+            {
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, OPTIONS",
+                    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                },
+            }
+        );
     } catch (error) {
         console.error("Auth error:", error);
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+        return NextResponse.json(
+            { error: "Unauthorized" },
+            {
+                status: 401,
+                headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, OPTIONS",
+                    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                },
+            }
+        );
     }
 }

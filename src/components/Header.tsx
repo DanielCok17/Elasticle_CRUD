@@ -13,7 +13,7 @@ const Header = () => {
       try {
         const res = await fetch("/api/auth/me", {
           method: "GET",
-          credentials: "include",
+          credentials: "include", // Zabezpečí odoslanie cookies
         });
 
         if (res.ok) {

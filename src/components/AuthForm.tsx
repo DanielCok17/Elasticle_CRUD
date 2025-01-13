@@ -18,14 +18,14 @@ export default function AuthForm() {
       <p className="text-center mt-4">
         {isLogin ? (
           <>
-            <p>Don’t have an account?</p>
+            <span>Don’t have an account?</span> {/* Zmena z `<p>` na `<span>` */}
             <button onClick={toggleForm} className="text-blue-600 hover:underline">
               Register
             </button>
           </>
         ) : (
           <>
-            Already have an account?{" "}
+            <span>Already have an account?</span> {/* Zmena z `<p>` na `<span>` */}
             <button onClick={toggleForm} className="text-blue-600 hover:underline">
               Login
             </button>

@@ -61,6 +61,12 @@ export async function POST(req: Request) {
             path: "/",
         });
 
+        // update user last login
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLoginAt: new Date() },
+        });
+
         return response;
     } catch (error) {
         console.error("Login error:", error);
