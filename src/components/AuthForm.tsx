@@ -18,7 +18,7 @@ export default function AuthForm() {
       <p className="text-center mt-4">
         {isLogin ? (
           <>
-            Don't have an account?{" "}
+            <p>Don’t have an account?</p>
             <button onClick={toggleForm} className="text-blue-600 hover:underline">
               Register
             </button>

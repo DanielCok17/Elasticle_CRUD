@@ -20,8 +20,9 @@ export function middleware(req: Request) {
 
         // Ak je token platný, pokračovať ďalej
         return NextResponse.next();
-    } catch (error) {
+    } catch (error: unknown) {
         // Ak token nie je platný alebo je iná chyba
+        console.error(error);
         return NextResponse.redirect(new URL('/login', req.url));
     }
 }

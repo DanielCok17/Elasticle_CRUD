@@ -25,6 +25,6 @@ export function generateRefreshToken(userId: number): string {
 }
 
 // Overenie Access Tokenu
-export function verifyAccessToken(token: string): any {
+export function verifyAccessToken(token: string): unknown {
     return jwt.verify(token, ACCESS_TOKEN_SECRET);
 }

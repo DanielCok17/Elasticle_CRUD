@@ -1,23 +1,25 @@
+import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
-import { verifyAccessToken } from "@/lib/auth";
+
+interface JwtPayload {
+    userId: number;
+    email: string;
+}
 
 export async function GET(req: Request) {
     try {
-        // Načítanie accessToken z cookies
-        const token = req.headers.get("cookie")?.split("; ").find((c) => c.startsWith("accessToken="))?.split("=")[1];
+        const token = req.headers.get("Authorization")?.split("Bearer ")[1];
 
         if (!token) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Overenie platnosti tokenu
-        const payload = verifyAccessToken(token);
+        const payload = jwt.verify(
+            token,
+            process.env.ACCESS_TOKEN_SECRET!
+        ) as JwtPayload;
 
-        if (!payload) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-
-        // Vrátenie emailu používateľa
+        // Return the user's email
         return NextResponse.json({ email: payload.email });
     } catch (error) {
         console.error("Auth error:", error);
