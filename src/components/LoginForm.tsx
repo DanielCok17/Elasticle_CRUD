@@ -45,7 +45,9 @@ export default function LoginForm({ onSwitchToRegister }: { onSwitchToRegister: 
       return;
     }
 
-    window.location.href = "/";
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   };
 
   return (
