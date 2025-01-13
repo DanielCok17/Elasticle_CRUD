@@ -108,7 +108,7 @@ const Header = () => {
               className="block lg:inline hover:underline text-white px-4 py-2 lg:py-0"
               onClick={closeMenu}
             >
-              Login / Register
+              Sign In
             </Link>
           )}
         </nav>

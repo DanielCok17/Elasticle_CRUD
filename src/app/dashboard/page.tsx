@@ -253,6 +253,7 @@ type Profile = {
   createdById: number;
   createdAt: string;
   updatedAt: string;
+  showFullDescription?: boolean;
 };
 
 export default function Dashboard() {
@@ -297,6 +298,7 @@ export default function Dashboard() {
             updatedAt: new Date(profile.updatedAt).toISOString(),
             photoUrl: profile.photoUrl || undefined,
             description: profile.description || undefined,
+            showFullDescription: false,
           }))
         );
       } else {
@@ -488,7 +490,27 @@ export default function Dashboard() {
                         {profile.firstName} {profile.lastName}
                       </p>
                       <p className="text-gray-600 text-sm mb-1">Dátum narodenia: {profile.birthDate}</p>
-                      <p className="text-gray-600 text-sm">{profile.description}</p>
+                      <p className="text-gray-600 text-sm">
+                        {profile.description && profile.description.length > 100
+                          ? profile.showFullDescription
+                            ? profile.description
+                            : `${profile.description.slice(0, 100)}...`
+                          : profile.description}
+                        {profile.description && profile.description.length > 100 && (
+                          <button
+                            onClick={() =>
+                              setProfiles((prev) =>
+                                prev.map((p) =>
+                                  p.id === profile.id ? { ...p, showFullDescription: !p.showFullDescription } : p
+                                )
+                              )
+                            }
+                            className="text-blue-500 font-semibold ml-2 focus:outline-none hover:underline"
+                          >
+                            {profile.showFullDescription ? "Zobraziť menej" : "Zobraziť viac"}
+                          </button>
+                        )}
+                      </p>
                     </div>
                     <div className="mt-4 flex gap-2">
                       <button
