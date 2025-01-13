@@ -16,7 +16,7 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 
 // Generovanie Access Tokenu
 export function generateAccessToken(userId: number): string {
-    return jwt.sign({ userId }, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+    return jwt.sign({ userId }, ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
 }
 
 // Generovanie Refresh Tokenu

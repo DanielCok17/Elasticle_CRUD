@@ -34,7 +34,7 @@ export async function POST(req: Request) {
         const accessToken = jwt.sign(
             { userId: user.id, email: user.email },
             process.env.ACCESS_TOKEN_SECRET!,
-            { expiresIn: "15m" } // Platnosť 15 minút
+            { expiresIn: "1d" } // Platnosť  1 deň
         );
 
         const refreshToken = jwt.sign(
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production", // Použitie len cez HTTPS v produkcii
             sameSite: "strict", // Zabraňuje CSRF útokom
-            maxAge: 60 * 15, // 15 minút
+            maxAge: 60 * 60 * 24, // 24 hodín 
             path: "/",
         });
 

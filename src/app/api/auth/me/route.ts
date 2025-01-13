@@ -34,7 +34,7 @@ export async function GET(req: Request) {
         ) as JwtPayload;
 
         return NextResponse.json(
-            { email: payload.email },
+            { email: payload.email, userId: payload.userId },
             {
                 headers: {
                     "Access-Control-Allow-Origin": "*",
