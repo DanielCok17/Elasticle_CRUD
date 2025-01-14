@@ -21,7 +21,7 @@ export default function Dashboard() {
   const [newProfile, setNewProfile] = useState<Partial<Profile>>({});
   const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
-  // is authenticated
+  const [loading, setLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   // Fetch logged-in user's ID
@@ -47,6 +47,7 @@ export default function Dashboard() {
   // Fetch profiles data
   useEffect(() => {
     async function fetchData() {
+      setLoading(true);
       const response = await getProfiles();
 
       if (response.success && response.data) {
@@ -64,6 +65,7 @@ export default function Dashboard() {
       } else {
         alert(response.message || "Failed to fetch profiles.");
       }
+      setLoading(false);
     }
 
     fetchData();
@@ -173,6 +175,10 @@ export default function Dashboard() {
     <>
       {!isAuthenticated ? (
         <div className="text-center text-red-500">Unauthorized! Please log in.</div>
+      ) : loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <div className="loader border-t-4 border-blue-500 rounded-full w-16 h-16 animate-spin"></div>
+        </div>
       ) : (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
           <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-8">
