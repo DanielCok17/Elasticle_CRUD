@@ -1,243 +1,3 @@
-// "use client";
-
-// import { useState, useEffect } from "react";
-// import { getProfiles, createProfile, updateProfile, deleteProfile } from "@/app/actions/profiles";
-
-// type Profile = {
-//   id: number;
-//   firstName: string;
-//   lastName: string;
-//   birthDate: string;
-//   photoUrl?: string;
-//   description?: string;
-//   createdById: number;
-//   createdAt: string;
-//   updatedAt: string;
-// };
-
-// export default function Dashboard() {
-//   const [profiles, setProfiles] = useState<Profile[]>([]);
-//   const [newProfile, setNewProfile] = useState<Partial<Profile>>({});
-//   const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
-//   const [userId, setUserId] = useState<number | null>(null);
-
-//   useEffect(() => {
-//     async function fetchAuthData() {
-//       const res = await fetch("/api/auth/me", {
-//         method: "GET",
-//         credentials: "include",
-//       });
-
-//       if (res.ok) {
-//         const data = await res.json();
-//         setUserId(data.userId);
-//       } else {
-//         alert("Unauthorized! Please log in.");
-//         window.location.href = "/auth";
-//       }
-//     }
-
-//     fetchAuthData();
-//   }, []);
-
-//   useEffect(() => {
-//     async function fetchData() {
-//       const data = await getProfiles();
-//       setProfiles(
-//         data.map((profile) => ({
-//           ...profile,
-//           birthDate: new Date(profile.birthDate).toISOString().split("T")[0],
-//           createdAt: new Date(profile.createdAt).toISOString(),
-//           updatedAt: new Date(profile.updatedAt).toISOString(),
-//           photoUrl: profile.photoUrl || undefined,
-//           description: profile.description || undefined,
-//         }))
-//       );
-//     }
-//     fetchData();
-//   }, []);
-
-//   async function handleAddOrUpdate() {
-//     if (!newProfile.firstName || !newProfile.lastName || !newProfile.birthDate || !userId) {
-//       alert("Vyplňte všetky povinné polia!");
-//       return;
-//     }
-
-//     if (editingProfile) {
-//       // Update profile
-//       const updated = await updateProfile(editingProfile.id, {
-//         firstName: newProfile.firstName!,
-//         lastName: newProfile.lastName!,
-//         birthDate: new Date(newProfile.birthDate).toISOString(),
-//         photoUrl: newProfile.photoUrl || undefined,
-//         description: newProfile.description || undefined,
-//       });
-
-//       setProfiles((prevProfiles) =>
-//         prevProfiles.map((profile) =>
-//           profile.id === updated.id
-//             ? {
-//                 ...updated,
-//                 birthDate: new Date(updated.birthDate).toISOString().split("T")[0],
-//                 createdAt: new Date(updated.createdAt).toISOString(),
-//                 updatedAt: new Date(updated.updatedAt).toISOString(),
-//                 photoUrl: updated.photoUrl || undefined,
-//                 description: updated.description || undefined,
-//               }
-//             : profile
-//         )
-//       );
-//       setEditingProfile(null);
-//     } else {
-//       // Add new profile
-//       const created = await createProfile({
-//         firstName: newProfile.firstName!,
-//         lastName: newProfile.lastName!,
-//         birthDate: new Date(newProfile.birthDate).toISOString(),
-//         photoUrl: newProfile.photoUrl || undefined,
-//         description: newProfile.description || undefined,
-//         createdById: userId!,
-//       });
-
-//       setProfiles((prevProfiles) => [
-//         ...prevProfiles,
-//         {
-//           ...created,
-//           birthDate: new Date(created.birthDate).toISOString().split("T")[0],
-//           createdAt: new Date(created.createdAt).toISOString(),
-//           updatedAt: new Date(created.updatedAt).toISOString(),
-//           photoUrl: created.photoUrl || undefined,
-//           description: created.description || undefined,
-//         },
-//       ]);
-//     }
-
-//     setNewProfile({});
-//   }
-
-//   async function handleDelete(id: number) {
-//     await deleteProfile(id);
-//     setProfiles((prevProfiles) => prevProfiles.filter((profile) => profile.id !== id));
-//   }
-
-//   function handleEdit(profile: Profile) {
-//     setEditingProfile(profile);
-//     setNewProfile(profile);
-//   }
-
-//   function handleCancelEdit() {
-//     setEditingProfile(null);
-//     setNewProfile({});
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gray-50 flex flex-col items-center p-6">
-//       <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-8">
-//         <h1 className="text-4xl font-extrabold text-gray-800 mb-6 text-center">Správa Profilov</h1>
-
-//         <div className="bg-blue-50 p-6 rounded-md mb-8">
-//           <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-//             {editingProfile ? "Upraviť profil" : "Pridať nový profil"}
-//           </h2>
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-//             <input
-//               type="text"
-//               placeholder="Meno"
-//               value={newProfile.firstName || ""}
-//               onChange={(e) => setNewProfile({ ...newProfile, firstName: e.target.value })}
-//               className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 text-gray-900"
-//             />
-//             <input
-//               type="text"
-//               placeholder="Priezvisko"
-//               value={newProfile.lastName || ""}
-//               onChange={(e) => setNewProfile({ ...newProfile, lastName: e.target.value })}
-//               className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 text-gray-900"
-//             />
-//             <input
-//               type="date"
-//               value={newProfile.birthDate || ""}
-//               onChange={(e) => setNewProfile({ ...newProfile, birthDate: e.target.value })}
-//               className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 text-gray-900"
-//             />
-//             <input
-//               type="text"
-//               placeholder="URL fotky"
-//               value={newProfile.photoUrl || ""}
-//               onChange={(e) => setNewProfile({ ...newProfile, photoUrl: e.target.value })}
-//               className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 text-gray-900"
-//             />
-//           </div>
-//           <textarea
-//             placeholder="Popis"
-//             value={newProfile.description || ""}
-//             onChange={(e) => setNewProfile({ ...newProfile, description: e.target.value })}
-//             className="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 text-gray-900 mb-4"
-//             rows={4}
-//           ></textarea>
-//           <div className="flex gap-4">
-//             <button
-//               onClick={handleAddOrUpdate}
-//               className="flex-1 bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300 font-semibold"
-//             >
-//               {editingProfile ? "Upraviť" : "Pridať"}
-//             </button>
-//             {editingProfile && (
-//               <button
-//                 onClick={handleCancelEdit}
-//                 className="flex-1 bg-gray-500 text-white py-3 rounded-md hover:bg-gray-600 transition duration-300 font-semibold"
-//               >
-//                 Zrušiť
-//               </button>
-//             )}
-//           </div>
-//         </div>
-
-//         <div>
-//           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Existujúce profily</h2>
-//           <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
-//             {profiles.map((profile) => (
-//               <li
-//                 key={profile.id}
-//                 className="bg-gray-100 shadow-sm rounded-md p-6 border border-gray-300 flex flex-col justify-between"
-//               >
-//                 <div>
-//                   {profile.photoUrl && (
-//                     <img
-//                       src={profile.photoUrl}
-//                       alt={`${profile.firstName} ${profile.lastName}`}
-//                       className="w-full h-40 object-cover rounded-md mb-4"
-//                     />
-//                   )}
-//                   <p className="font-bold text-gray-800 text-xl mb-2">
-//                     {profile.firstName} {profile.lastName}
-//                   </p>
-//                   <p className="text-gray-600 text-sm mb-1">Dátum narodenia: {profile.birthDate}</p>
-//                   <p className="text-gray-600 text-sm">{profile.description}</p>
-//                 </div>
-//                 <div className="mt-4 flex gap-2">
-//                   <button
-//                     onClick={() => handleEdit(profile)}
-//                     className="flex-1 bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 transition duration-300"
-//                   >
-//                     Upraviť
-//                   </button>
-//                   <button
-//                     onClick={() => handleDelete(profile.id)}
-//                     className="flex-1 bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition duration-300"
-//                   >
-//                     Odstrániť
-//                   </button>
-//                 </div>
-//               </li>
-//             ))}
-//           </ul>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -318,6 +78,7 @@ export default function Dashboard() {
 
     try {
       if (editingProfile) {
+        // Editing an existing profile
         const response = await updateProfile(editingProfile.id, {
           firstName: newProfile.firstName!,
           lastName: newProfile.lastName!,
@@ -327,7 +88,7 @@ export default function Dashboard() {
         });
 
         if ("data" in response && response.success && response.data) {
-          const createdProfile = {
+          const updatedProfile = {
             ...response.data,
             birthDate: new Date(response.data.birthDate).toISOString().split("T")[0],
             createdAt: new Date(response.data.createdAt).toISOString(),
@@ -336,13 +97,17 @@ export default function Dashboard() {
             description: response.data.description || undefined,
           };
 
-          setProfiles((prevProfiles) => [...prevProfiles, createdProfile]);
+          // Update the specific profile in the list
+          setProfiles((prevProfiles) =>
+            prevProfiles.map((profile) => (profile.id === editingProfile.id ? updatedProfile : profile))
+          );
         } else {
-          alert("Profile creation failed.");
+          alert("Profile update failed.");
         }
 
         setEditingProfile(null);
       } else {
+        // Adding a new profile
         const response = await createProfile({
           firstName: newProfile.firstName!,
           lastName: newProfile.lastName!,
@@ -362,6 +127,7 @@ export default function Dashboard() {
             description: response.data.description || undefined,
           };
 
+          // Add the new profile to the list
           setProfiles((prevProfiles) => [...prevProfiles, createdProfile]);
         } else {
           alert("Profile creation failed.");
@@ -475,8 +241,9 @@ export default function Dashboard() {
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {profiles.map((profile) => (
                   <li
-                    key={profile.id}
+                    key={`${profile.id}`}
                     className="bg-gray-100 shadow-sm rounded-md p-6 border border-gray-300 flex flex-col justify-between"
+                    style={{ overflowWrap: "break-word", wordWrap: "break-word" }}
                   >
                     <div>
                       {profile.photoUrl && (
@@ -491,24 +258,26 @@ export default function Dashboard() {
                       </p>
                       <p className="text-gray-600 text-sm mb-1">Dátum narodenia: {profile.birthDate}</p>
                       <p className="text-gray-600 text-sm">
-                        {profile.description && profile.description.length > 100
-                          ? profile.showFullDescription
-                            ? profile.description
-                            : `${profile.description.slice(0, 100)}...`
-                          : profile.description}
-                        {profile.description && profile.description.length > 100 && (
-                          <button
-                            onClick={() =>
-                              setProfiles((prev) =>
-                                prev.map((p) =>
-                                  p.id === profile.id ? { ...p, showFullDescription: !p.showFullDescription } : p
+                        {profile.description && profile.description.length > 100 ? (
+                          <>
+                            {profile.showFullDescription
+                              ? profile.description
+                              : `${profile.description.slice(0, 100)}...`}
+                            <button
+                              onClick={() =>
+                                setProfiles((prev) =>
+                                  prev.map((p) =>
+                                    p.id === profile.id ? { ...p, showFullDescription: !p.showFullDescription } : p
+                                  )
                                 )
-                              )
-                            }
-                            className="text-blue-500 font-semibold ml-2 focus:outline-none hover:underline"
-                          >
-                            {profile.showFullDescription ? "Zobraziť menej" : "Zobraziť viac"}
-                          </button>
+                              }
+                              className="text-blue-500 font-semibold ml-2 focus:outline-none hover:underline"
+                            >
+                              {profile.showFullDescription ? "Zobraziť menej" : "Zobraziť viac"}
+                            </button>
+                          </>
+                        ) : (
+                          profile.description
                         )}
                       </p>
                     </div>
